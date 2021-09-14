@@ -18,4 +18,20 @@ public class ProductController {
     public String save(@RequestBody Product pProduct) throws ExecutionException, InterruptedException {
         return productservice.saveProduct(pProduct);
     }
+
+    @GetMapping("/products/{name}")
+    public Product getProducts(@PathVariable String name) throws ExecutionException, InterruptedException {
+        return productservice.getProductDetails(name);
+    }
+
+    @PutMapping("/products")
+    public String update(@RequestBody Product pProduct) throws ExecutionException, InterruptedException {
+        return productservice.updateProduct(pProduct);
+    }
+
+    @DeleteMapping("/products/{name}")
+    public String delete(@PathVariable String name) throws ExecutionException, InterruptedException {
+        return productservice.deleteProduct(name);
+    }
+
 }
