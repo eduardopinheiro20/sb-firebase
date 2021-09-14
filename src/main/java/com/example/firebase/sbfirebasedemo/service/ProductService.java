@@ -9,6 +9,9 @@ import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -25,7 +28,7 @@ public class ProductService {
         return collectionApiFuture.get().getUpdateTime().toString();
     }
 
-    public Product getProductDetails(String name) throws ExecutionException, InterruptedException {
+    public Product getProductByName(String name) throws ExecutionException, InterruptedException {
 
         Firestore dbFirestore = FirestoreClient.getFirestore();
 
@@ -42,6 +45,28 @@ public class ProductService {
         } else {
             return null;
         }
+    }
+
+    public List<Product> getProducts() throws ExecutionException, InterruptedException {
+
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+
+        Iterable<DocumentReference> documentReference  =  dbFirestore.collection(COLLECTION_NAME).listDocuments();
+        Iterator<DocumentReference> iterator = documentReference.iterator();
+
+        List<Product> productsList = new ArrayList<>();
+        Product product = null;
+
+        while (iterator.hasNext()) {
+            DocumentReference documentReference1 = iterator.next();
+            ApiFuture <DocumentSnapshot> future = documentReference1.get();
+            DocumentSnapshot documentSnapshot = future.get();
+
+            product = documentSnapshot.toObject(Product.class);
+            productsList.add(product);
+        }
+
+        return productsList;
     }
 
     public String updateProduct(Product pProduct) throws ExecutionException, InterruptedException {
